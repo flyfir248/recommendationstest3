@@ -5,13 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Home - E-commerce</title>
     <style>
-        /* Style the menu bar */
         .menu-bar {
             background-color: #f2f2f2;
             overflow: hidden;
         }
 
-        /* Style the menu bar buttons */
         .menu-bar button {
             float: left;
             display: block;
@@ -25,24 +23,181 @@
             cursor: pointer;
         }
 
-        /* Change color of menu bar buttons on hover */
         .menu-bar button:hover {
             background-color: #ddd;
         }
+
+        /* Center the search bar */
+        .search-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 20px;
+            position: relative;
+        }
+
+        .search-container form {
+            display: flex;
+        }
+
+        .search-container input[type="text"] {
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ddd;
+            border-radius: 4px 0 0 4px;
+            outline: none;
+        }
+
+        .search-container button {
+            padding: 10px 20px;
+            font-size: 16px;
+            border: 1px solid #ddd;
+            border-left: none;
+            background-color: #4CAF50;
+            color: white;
+            cursor: pointer;
+            border-radius: 0 4px 4px 0;
+            outline: none;
+        }
+
+        .search-container button:hover {
+            background-color: #45a049;
+        }
+
+        /* Style for autocomplete suggestions */
+        .autocomplete-suggestions {
+            border: 1px solid #ddd;
+            max-height: 150px;
+            overflow-y: auto;
+            background-color: white;
+            position: absolute;
+            z-index: 1000;
+        }
+
+        .autocomplete-suggestion {
+            padding: 8px;
+            cursor: pointer;
+        }
+
+        .autocomplete-suggestion:hover {
+            background-color: #ddd;
+        }
+
+        /* Style for the featured products section */
+        .featured-products {
+            margin-top: 20px;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+        }
+
+        .featured-products-container {
+            width: 80%;
+            max-width: 800px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .featured-product {
+            display: none;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background-color: #f9f9f9;
+            text-align: center;
+        }
+
+        .featured-product.active {
+            display: block;
+            animation: fadeIn 1s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
     </style>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const searchInput = document.querySelector('input[name="query"]');
+            const suggestionsContainer = document.createElement('div');
+            suggestionsContainer.classList.add('autocomplete-suggestions');
+            document.body.appendChild(suggestionsContainer);
+
+            searchInput.addEventListener('input', function () {
+                const query = searchInput.value;
+                if (query.length >= 2) {  // Start showing suggestions after 2 characters
+                    fetch(`/autocomplete?query=${query}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            suggestionsContainer.innerHTML = '';
+                            data.forEach(suggestion => {
+                                const suggestionElement = document.createElement('div');
+                                suggestionElement.classList.add('autocomplete-suggestion');
+                                suggestionElement.textContent = suggestion;
+                                suggestionElement.addEventListener('click', function () {
+                                    searchInput.value = suggestion;
+                                    suggestionsContainer.innerHTML = '';
+                                });
+                                suggestionsContainer.appendChild(suggestionElement);
+                            });
+                        });
+                } else {
+                    suggestionsContainer.innerHTML = '';
+                }
+            });
+
+            // Position the suggestions container
+            searchInput.addEventListener('focus', function () {
+                const rect = searchInput.getBoundingClientRect();
+                suggestionsContainer.style.left = `${rect.left}px`;
+                suggestionsContainer.style.top = `${rect.bottom}px`;
+                suggestionsContainer.style.width = `${rect.width}px`;
+            });
+
+            // Hide the suggestions container when clicking outside
+            document.addEventListener('click', function (e) {
+                if (!searchInput.contains(e.target) && !suggestionsContainer.contains(e.target)) {
+                    suggestionsContainer.innerHTML = '';
+                }
+            });
+
+            // Featured products animation
+            let currentIndex = 0;
+            const products = document.querySelectorAll('.featured-product');
+            if (products.length > 0) {
+                products[currentIndex].classList.add('active');
+                setInterval(() => {
+                    products[currentIndex].classList.remove('active');
+                    currentIndex = (currentIndex + 1) % products.length;
+                    products[currentIndex].classList.add('active');
+                }, 5000);
+            }
+        });
+    </script>
 </head>
 <body>
-    <!-- Menu bar -->
     <div class="menu-bar">
-        {% for dataframe_name in dataframe_names %}
-        <button onclick="location.href='{{ url_for('show_dataframe', dataframe_name=dataframe_name) }}';">{{ dataframe_name }}</button>
-        {% endfor %}
+        <!-- Add menu buttons here if needed -->
     </div>
 
-    <h1>Welcome to the E-commerce Website</h1>
-    <form action="/search" method="get">
-        <input type="text" name="query" placeholder="Search for products">
-        <button type="submit">Search</button>
-    </form>
+    <div class="search-container">
+        <form action="/search" method="get">
+            <input type="text" name="query" placeholder="Search for products">
+            <button type="submit">Search</button>
+        </form>
+    </div>
+
+    <div class="featured-products">
+        <div class="featured-products-container">
+            {% for product in featured_products %}
+            <div class="featured-product">
+                <h2>{{ product['deal_title'] }}</h2>
+                <p>{{ product['deal_description'] }}</p>
+                <p><strong>Price:</strong> ${{ product['price'] }}</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
 </body>
 </html>

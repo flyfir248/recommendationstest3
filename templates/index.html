@@ -114,13 +114,20 @@
             to { opacity: 1; }
         }
 
-        .top-product {
+        .top-products {
             margin-top: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .top-product {
             padding: 20px;
             border: 1px solid #ddd;
             border-radius: 4px;
             background-color: #e9f7e9;
             text-align: center;
+            margin-bottom: 10px;
         }
     </style>
     <script>
@@ -203,13 +210,15 @@
         </div>
     </div>
 
-    <div class="top-product">
-        <h2>Top Product</h2>
-        <h3>{{ top_product['deal_title'] }}</h3>
-        <p>{{ top_product['product_description'] }}</p>
-        <p><strong>Category:</strong> {{ top_product['category_all'] }}</p>
-        <p><strong>Attributes:</strong> {{ top_product['product_description'] }}</p>
-        <p><strong>Price:</strong> ${{ top_product['deal_act_price'] }}</p>
+    <div class="top-products">
+        <h2>Top Products</h2>
+        {% for product in top_products %}
+        <div class="top-product">
+            <h3>{{ product['deal_title'] }}</h3>
+            <p>{{ product['product_description'] }}</p>
+            <p><strong>Price:</strong> ${{ product['deal_act_price'] }}</p>
+        </div>
+        {% endfor %}
     </div>
 </body>
 </html>

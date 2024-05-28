@@ -1,8 +1,12 @@
 from flask import Flask, render_template, request, jsonify
 import pandas as pd
 import random
+import logging
 
 app = Flask(__name__)
+
+# Setup logging
+logging.basicConfig(filename='product_scores.log', level=logging.INFO, format='%(asctime)s:%(levelname)s:%(message)s')
 
 # Load the CSV data
 data = pd.read_csv('amz_fpkt_data.csv')
@@ -32,6 +36,12 @@ def calculate_scores(data):
                                            sum(attribute_counts.get(attr.strip(), 0) for attr in
                                                row['product_description'].split(',')),
                                axis=1)
+
+    # Log the scores
+    logging.info("Calculated scores:")
+    for idx, row in data.iterrows():
+        logging.info(f"Product ID: {row['deal_id']}, Score: {row['score']}")
+
     return data
 
 
@@ -40,13 +50,16 @@ data = calculate_scores(data)
 
 @app.route('/')
 def home():
+    # Sort products based on score in descending order
+    sorted_data = data.sort_values(by='score', ascending=False)
+
     # Randomly select a few products for the featured section
-    featured_products = data.sample(n=5).to_dict(orient='records')
+    featured_products = sorted_data.sample(n=5).to_dict(orient='records')
 
-    # Select the top product based on score
-    top_product = data.loc[data['score'].idxmax()].to_dict()
+    # Select the top products based on score
+    top_products = sorted_data.head(5).to_dict(orient='records')
 
-    return render_template('index.html', featured_products=featured_products, top_product=top_product)
+    return render_template('index.html', featured_products=featured_products, top_products=top_products)
 
 
 @app.route('/search', methods=['GET'])
@@ -71,3 +84,5 @@ def autocomplete():
 
 if __name__ == '__main__':
     app.run(debug=False)
+
+#http://127.0.0.1:5000/

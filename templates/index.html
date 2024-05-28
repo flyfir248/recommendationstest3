@@ -27,7 +27,6 @@
             background-color: #ddd;
         }
 
-        /* Center the search bar */
         .search-container {
             display: flex;
             justify-content: center;
@@ -64,7 +63,6 @@
             background-color: #45a049;
         }
 
-        /* Style for autocomplete suggestions */
         .autocomplete-suggestions {
             border: 1px solid #ddd;
             max-height: 150px;
@@ -83,7 +81,6 @@
             background-color: #ddd;
         }
 
-        /* Style for the featured products section */
         .featured-products {
             margin-top: 20px;
             width: 100%;
@@ -116,6 +113,15 @@
             from { opacity: 0; }
             to { opacity: 1; }
         }
+
+        .top-product {
+            margin-top: 20px;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background-color: #e9f7e9;
+            text-align: center;
+        }
     </style>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
@@ -126,7 +132,7 @@
 
             searchInput.addEventListener('input', function () {
                 const query = searchInput.value;
-                if (query.length >= 2) {  // Start showing suggestions after 2 characters
+                if (query.length >= 2) {
                     fetch(`/autocomplete?query=${query}`)
                         .then(response => response.json())
                         .then(data => {
@@ -147,7 +153,6 @@
                 }
             });
 
-            // Position the suggestions container
             searchInput.addEventListener('focus', function () {
                 const rect = searchInput.getBoundingClientRect();
                 suggestionsContainer.style.left = `${rect.left}px`;
@@ -155,14 +160,12 @@
                 suggestionsContainer.style.width = `${rect.width}px`;
             });
 
-            // Hide the suggestions container when clicking outside
             document.addEventListener('click', function (e) {
                 if (!searchInput.contains(e.target) && !suggestionsContainer.contains(e.target)) {
                     suggestionsContainer.innerHTML = '';
                 }
             });
 
-            // Featured products animation
             let currentIndex = 0;
             const products = document.querySelectorAll('.featured-product');
             if (products.length > 0) {
@@ -193,11 +196,20 @@
             {% for product in featured_products %}
             <div class="featured-product">
                 <h2>{{ product['deal_title'] }}</h2>
-                <p>{{ product['deal_description'] }}</p>
-                <p><strong>Price:</strong> ${{ product['price'] }}</p>
+                <p>{{ product['product_description'] }}</p>
+                <p><strong>Price:</strong> ${{ product['deal_act_price'] }}</p>
             </div>
             {% endfor %}
         </div>
+    </div>
+
+    <div class="top-product">
+        <h2>Top Product</h2>
+        <h3>{{ top_product['deal_title'] }}</h3>
+        <p>{{ top_product['product_description'] }}</p>
+        <p><strong>Category:</strong> {{ top_product['category_all'] }}</p>
+        <p><strong>Attributes:</strong> {{ top_product['product_description'] }}</p>
+        <p><strong>Price:</strong> ${{ top_product['deal_act_price'] }}</p>
     </div>
 </body>
 </html>

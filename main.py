@@ -2,17 +2,36 @@ from flask import Flask, render_template, request, jsonify
 import pandas as pd
 import random
 import logging
+from flask_sqlalchemy import SQLAlchemy
+from datetime import datetime
 
 app = Flask(__name__)
 
 # Setup logging
 logging.basicConfig(filename='product_scores.log', level=logging.INFO, format='%(asctime)s:%(levelname)s:%(message)s')
 
+# Configure SQLAlchemy
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///search_data.db'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+db = SQLAlchemy(app)
+
+# Define the SearchQuery model
+class SearchQuery(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    query = db.Column(db.String(200), nullable=False)
+    timestamp = db.Column(db.DateTime, default=datetime.utcnow)
+
+    def __repr__(self):
+        return f'<SearchQuery {self.query}>'
+
+# Create the database
+with app.app_context():
+    db.create_all()
+
 # Load the CSV data
 data = pd.read_csv('amz_fpkt_data.csv')
 
 print(data.columns)
-
 
 def calculate_scores(data):
     # Ensure 'product_description' has no missing values
@@ -44,9 +63,7 @@ def calculate_scores(data):
 
     return data
 
-
 data = calculate_scores(data)
-
 
 @app.route('/')
 def home():
@@ -61,16 +78,19 @@ def home():
 
     return render_template('index.html', featured_products=featured_products, top_products=top_products)
 
-
 @app.route('/search', methods=['GET'])
 def search():
     query = request.args.get('query')
     if query:
+        # Store the search query in the database
+        new_query = SearchQuery(query=query)
+        db.session.add(new_query)
+        db.session.commit()
+
         results = data[data['deal_title'].str.contains(query, case=False, na=False)]
     else:
         results = pd.DataFrame()
     return render_template('search.html', query=query, results=results)
-
 
 @app.route('/autocomplete', methods=['GET'])
 def autocomplete():
@@ -81,8 +101,5 @@ def autocomplete():
         suggestions = []
     return jsonify(suggestions)
 
-
 if __name__ == '__main__':
     app.run(debug=False)
-
-#http://127.0.0.1:5000/

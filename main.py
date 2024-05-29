@@ -82,7 +82,7 @@ def home():
         sorted_data = data.sort_values(by='score', ascending=False)
         featured_products = sorted_data.sample(n=5).to_dict(orient='records')
         top_products = sorted_data.head(5).to_dict(orient='records')
-        recommended_products = get_recommendations()
+        recommended_products = get_recommendations()  # Fetch recommended products here
 
         return render_template('index.html', featured_products=featured_products, top_products=top_products, recommended_products=recommended_products)
     except Exception as e:

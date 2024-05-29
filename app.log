@@ -56,3 +56,50 @@
 2024-05-29 14:25:49,496:INFO:127.0.0.1 - - [29/May/2024 14:25:49] "GET /autocomplete?query=micr HTTP/1.1" 200 -
 2024-05-29 14:25:49,578:INFO:127.0.0.1 - - [29/May/2024 14:25:49] "GET /autocomplete?query=micro HTTP/1.1" 200 -
 2024-05-29 14:25:52,034:INFO:127.0.0.1 - - [29/May/2024 14:25:52] "GET /search?query=spincart+3+in+1+Screen+Cleaning+Set+for+PC,+Laptops,+Monitors,+Mobiles,+LCD,+LED,+TV/Professional+Quality+100ml+with+Micro+Fibre+Cloth+and+Brush+for+Computers,+Laptops,+Mobiles  (klc-1005) HTTP/1.1" 200 -
+2024-05-29 15:58:41,117:ERROR:Error getting recommendations: Neither 'InstrumentedAttribute' object nor 'Comparator' object associated with SearchQuery.query has an attribute 'order_by'
+2024-05-29 15:58:41,127:INFO:127.0.0.1 - - [29/May/2024 15:58:41] "GET / HTTP/1.1" 200 -
+2024-05-29 15:58:49,139:INFO:127.0.0.1 - - [29/May/2024 15:58:49] "GET /autocomplete?query=gl HTTP/1.1" 200 -
+2024-05-29 15:58:49,233:INFO:127.0.0.1 - - [29/May/2024 15:58:49] "GET /autocomplete?query=gla HTTP/1.1" 200 -
+2024-05-29 15:58:49,417:INFO:127.0.0.1 - - [29/May/2024 15:58:49] "GET /autocomplete?query=glas HTTP/1.1" 200 -
+2024-05-29 15:58:51,451:INFO:127.0.0.1 - - [29/May/2024 15:58:51] "GET /search?query=Gorilla+Cases+Tempered+Glass+Guard+for+Motorola+Edge+40+,+Moto+Edge+40+Neo+(Premium+Technology+UV+Glass+With+Installation+Kit)  (Pack+of+1) HTTP/1.1" 200 -
+2024-05-29 15:59:13,536:INFO:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2024-05-29 15:59:13,536:INFO:[33mPress CTRL+C to quit[0m
+2024-05-29 15:59:18,436:ERROR:Error getting recommendations: Neither 'InstrumentedAttribute' object nor 'Comparator' object associated with SearchQuery.query has an attribute 'order_by'
+2024-05-29 15:59:18,446:INFO:127.0.0.1 - - [29/May/2024 15:59:18] "GET / HTTP/1.1" 200 -
+2024-05-29 15:59:24,019:INFO:127.0.0.1 - - [29/May/2024 15:59:24] "GET /autocomplete?query=ph HTTP/1.1" 200 -
+2024-05-29 15:59:24,231:INFO:127.0.0.1 - - [29/May/2024 15:59:24] "GET /autocomplete?query=pho HTTP/1.1" 200 -
+2024-05-29 15:59:24,480:INFO:127.0.0.1 - - [29/May/2024 15:59:24] "GET /autocomplete?query=phon HTTP/1.1" 200 -
+2024-05-29 15:59:26,532:INFO:127.0.0.1 - - [29/May/2024 15:59:26] "GET /search?query=Apple+20W+USB-C+Power+Adapter+(for+iPhone,+iPad+%26+AirPods) HTTP/1.1" 200 -
+2024-05-29 15:59:34,215:INFO:127.0.0.1 - - [29/May/2024 15:59:34] "GET /autocomplete?query=se HTTP/1.1" 200 -
+2024-05-29 15:59:34,373:INFO:127.0.0.1 - - [29/May/2024 15:59:34] "GET /autocomplete?query=sel HTTP/1.1" 200 -
+2024-05-29 15:59:34,654:INFO:127.0.0.1 - - [29/May/2024 15:59:34] "GET /autocomplete?query=self HTTP/1.1" 200 -
+2024-05-29 15:59:34,951:INFO:127.0.0.1 - - [29/May/2024 15:59:34] "GET /autocomplete?query=selfi HTTP/1.1" 200 -
+2024-05-29 15:59:35,066:INFO:127.0.0.1 - - [29/May/2024 15:59:35] "GET /autocomplete?query=selfie HTTP/1.1" 200 -
+2024-05-29 15:59:35,399:INFO:127.0.0.1 - - [29/May/2024 15:59:35] "GET /autocomplete?query=selfie HTTP/1.1" 200 -
+2024-05-29 15:59:35,528:INFO:127.0.0.1 - - [29/May/2024 15:59:35] "GET /autocomplete?query=selfie%20s HTTP/1.1" 200 -
+2024-05-29 15:59:35,926:INFO:127.0.0.1 - - [29/May/2024 15:59:35] "GET /autocomplete?query=selfie%20st HTTP/1.1" 200 -
+2024-05-29 15:59:36,218:INFO:127.0.0.1 - - [29/May/2024 15:59:36] "GET /autocomplete?query=selfie%20sti HTTP/1.1" 200 -
+2024-05-29 15:59:36,303:INFO:127.0.0.1 - - [29/May/2024 15:59:36] "GET /autocomplete?query=selfie%20stic HTTP/1.1" 200 -
+2024-05-29 15:59:36,476:INFO:127.0.0.1 - - [29/May/2024 15:59:36] "GET /autocomplete?query=selfie%20stick HTTP/1.1" 200 -
+2024-05-29 15:59:37,030:INFO:127.0.0.1 - - [29/May/2024 15:59:37] "GET /search?query=selfie+stick HTTP/1.1" 200 -
+2024-05-29 16:08:04,887:INFO:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2024-05-29 16:08:04,887:INFO:[33mPress CTRL+C to quit[0m
+2024-05-29 16:08:15,473:ERROR:Error in home route: 'list' object has no attribute 'to_csv'
+2024-05-29 16:08:15,474:INFO:127.0.0.1 - - [29/May/2024 16:08:15] "[35m[1mGET / HTTP/1.1[0m" 500 -
+2024-05-29 16:08:16,295:ERROR:Error in home route: 'list' object has no attribute 'to_csv'
+2024-05-29 16:08:16,296:INFO:127.0.0.1 - - [29/May/2024 16:08:16] "[35m[1mGET / HTTP/1.1[0m" 500 -
+2024-05-29 16:08:16,868:ERROR:Error in home route: 'list' object has no attribute 'to_csv'
+2024-05-29 16:08:16,869:INFO:127.0.0.1 - - [29/May/2024 16:08:16] "[35m[1mGET / HTTP/1.1[0m" 500 -
+2024-05-29 16:08:19,018:ERROR:Error in home route: 'list' object has no attribute 'to_csv'
+2024-05-29 16:08:19,019:INFO:127.0.0.1 - - [29/May/2024 16:08:19] "[35m[1mGET / HTTP/1.1[0m" 500 -
+2024-05-29 16:08:37,621:INFO:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2024-05-29 16:08:37,621:INFO:[33mPress CTRL+C to quit[0m
+2024-05-29 16:08:41,032:ERROR:Error getting recommendations: Neither 'InstrumentedAttribute' object nor 'Comparator' object associated with SearchQuery.query has an attribute 'order_by'
+2024-05-29 16:08:41,041:INFO:127.0.0.1 - - [29/May/2024 16:08:41] "GET / HTTP/1.1" 200 -
+2024-05-29 16:09:17,326:ERROR:Error getting recommendations: Neither 'InstrumentedAttribute' object nor 'Comparator' object associated with SearchQuery.query has an attribute 'order_by'
+2024-05-29 16:09:17,327:INFO:127.0.0.1 - - [29/May/2024 16:09:17] "GET / HTTP/1.1" 200 -
+2024-05-29 16:09:27,688:ERROR:Error getting recommendations: Neither 'InstrumentedAttribute' object nor 'Comparator' object associated with SearchQuery.query has an attribute 'order_by'
+2024-05-29 16:09:27,690:INFO:127.0.0.1 - - [29/May/2024 16:09:27] "GET / HTTP/1.1" 200 -

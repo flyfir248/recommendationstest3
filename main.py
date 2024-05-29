@@ -4,6 +4,8 @@ import random
 import logging
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.metrics.pairwise import cosine_similarity
 
 app = Flask(__name__)
 
@@ -15,6 +17,7 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///search_data.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
+
 # Define the SearchQuery model
 class SearchQuery(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -24,6 +27,7 @@ class SearchQuery(db.Model):
     def __repr__(self):
         return f'<SearchQuery {self.query}>'
 
+
 # Create the database
 with app.app_context():
     db.create_all()
@@ -32,6 +36,7 @@ with app.app_context():
 data = pd.read_csv('amz_fpkt_data.csv')
 
 print(data.columns)
+
 
 def calculate_scores(data):
     # Ensure 'product_description' has no missing values
@@ -63,20 +68,55 @@ def calculate_scores(data):
 
     return data
 
+
 data = calculate_scores(data)
+
+
+def get_recommendations():
+    try:
+        # Retrieve the latest search query
+        latest_search = SearchQuery.query.order_by(SearchQuery.timestamp.desc()).first()
+        if not latest_search:
+            return []
+
+        # Use TF-IDF vectorizer to compute similarity
+        tfidf_vectorizer = TfidfVectorizer()
+        tfidf_matrix = tfidf_vectorizer.fit_transform(data['product_description'])
+
+        search_vector = tfidf_vectorizer.transform([latest_search.query])
+
+        cosine_similarities = cosine_similarity(search_vector, tfidf_matrix).flatten()
+        similar_indices = cosine_similarities.argsort()[:-6:-1]
+
+        recommended_products = data.iloc[similar_indices].to_dict(orient='records')
+
+        return recommended_products
+    except Exception as e:
+        logging.error(f"Error getting recommendations: {e}")
+        return []
+
 
 @app.route('/')
 def home():
-    # Sort products based on score in descending order
-    sorted_data = data.sort_values(by='score', ascending=False)
+    try:
+        # Sort products based on score in descending order
+        sorted_data = data.sort_values(by='score', ascending=False)
 
-    # Randomly select a few products for the featured section
-    featured_products = sorted_data.sample(n=5).to_dict(orient='records')
+        # Randomly select a few products for the featured section
+        featured_products = sorted_data.sample(n=5).to_dict(orient='records')
 
-    # Select the top products based on score
-    top_products = sorted_data.head(5).to_dict(orient='records')
+        # Select the top products based on score
+        top_products = sorted_data.head(5).to_dict(orient='records')
 
-    return render_template('index.html', featured_products=featured_products, top_products=top_products)
+        # Get recommended products based on search history
+        recommended_products = get_recommendations()
+
+        return render_template('index.html', featured_products=featured_products, top_products=top_products,
+                               recommended_products=recommended_products)
+    except Exception as e:
+        logging.error(f"Error in home route: {e}")
+        return "Internal Server Error", 500
+
 
 @app.route('/search', methods=['GET'])
 def search():
@@ -92,6 +132,7 @@ def search():
         results = pd.DataFrame()
     return render_template('search.html', query=query, results=results)
 
+
 @app.route('/autocomplete', methods=['GET'])
 def autocomplete():
     query = request.args.get('query', '')
@@ -100,6 +141,7 @@ def autocomplete():
     else:
         suggestions = []
     return jsonify(suggestions)
+
 
 if __name__ == '__main__':
     app.run(debug=False)

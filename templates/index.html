@@ -129,6 +129,22 @@
             text-align: center;
             margin-bottom: 10px;
         }
+
+        .recommended-products {
+            margin-top: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .recommended-product {
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background-color: #e9f7e9;
+            text-align: center;
+            margin-bottom: 10px;
+        }
     </style>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
@@ -214,6 +230,17 @@
         <h2>Top Products</h2>
         {% for product in top_products %}
         <div class="top-product">
+            <h3>{{ product['deal_title'] }}</h3>
+            <p>{{ product['product_description'] }}</p>
+            <p><strong>Price:</strong> ${{ product['deal_act_price'] }}</p>
+        </div>
+        {% endfor %}
+    </div>
+
+    <div class="recommended-products">
+        <h2>Products You May Also Like</h2>
+        {% for product in recommended_products %}
+        <div class="recommended-product">
             <h3>{{ product['deal_title'] }}</h3>
             <p>{{ product['product_description'] }}</p>
             <p><strong>Price:</strong> ${{ product['deal_act_price'] }}</p>

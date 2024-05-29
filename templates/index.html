@@ -239,13 +239,17 @@
 
     <div class="recommended-products">
         <h2>Products You May Also Like</h2>
-        {% for product in recommended_products %}
-        <div class="recommended-product">
-            <h3>{{ product['deal_title'] }}</h3>
-            <p>{{ product['product_description'] }}</p>
-            <p><strong>Price:</strong> ${{ product['deal_act_price'] }}</p>
-        </div>
-        {% endfor %}
+        {% if recommended_products %}
+            {% for product in recommended_products %}
+            <div class="recommended-product">
+                <h3>{{ product['deal_title'] }}</h3>
+                <p>{{ product['product_description'] }}</p>
+                <p><strong>Price:</strong> ${{ product['deal_act_price'] }}</p>
+            </div>
+            {% endfor %}
+        {% else %}
+            <p>No recommendations available.</p>
+        {% endif %}
     </div>
 </body>
 </html>

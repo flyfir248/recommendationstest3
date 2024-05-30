@@ -2,254 +2,81 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Home - E-commerce</title>
-    <style>
-        .menu-bar {
-            background-color: #f2f2f2;
-            overflow: hidden;
-        }
-
-        .menu-bar button {
-            float: left;
-            display: block;
-            color: black;
-            text-align: center;
-            padding: 14px 20px;
-            text-decoration: none;
-            font-size: 16px;
-            border: none;
-            background-color: inherit;
-            cursor: pointer;
-        }
-
-        .menu-bar button:hover {
-            background-color: #ddd;
-        }
-
-        .search-container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin-top: 20px;
-            position: relative;
-        }
-
-        .search-container form {
-            display: flex;
-        }
-
-        .search-container input[type="text"] {
-            padding: 10px;
-            font-size: 16px;
-            border: 1px solid #ddd;
-            border-radius: 4px 0 0 4px;
-            outline: none;
-        }
-
-        .search-container button {
-            padding: 10px 20px;
-            font-size: 16px;
-            border: 1px solid #ddd;
-            border-left: none;
-            background-color: #4CAF50;
-            color: white;
-            cursor: pointer;
-            border-radius: 0 4px 4px 0;
-            outline: none;
-        }
-
-        .search-container button:hover {
-            background-color: #45a049;
-        }
-
-        .autocomplete-suggestions {
-            border: 1px solid #ddd;
-            max-height: 150px;
-            overflow-y: auto;
-            background-color: white;
-            position: absolute;
-            z-index: 1000;
-        }
-
-        .autocomplete-suggestion {
-            padding: 8px;
-            cursor: pointer;
-        }
-
-        .autocomplete-suggestion:hover {
-            background-color: #ddd;
-        }
-
-        .featured-products {
-            margin-top: 20px;
-            width: 100%;
-            display: flex;
-            justify-content: center;
-        }
-
-        .featured-products-container {
-            width: 80%;
-            max-width: 800px;
-            overflow: hidden;
-            position: relative;
-        }
-
-        .featured-product {
-            display: none;
-            padding: 20px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            background-color: #f9f9f9;
-            text-align: center;
-        }
-
-        .featured-product.active {
-            display: block;
-            animation: fadeIn 1s;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-
-        .top-products {
-            margin-top: 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        .top-product {
-            padding: 20px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            background-color: #e9f7e9;
-            text-align: center;
-            margin-bottom: 10px;
-        }
-
-        .recommended-products {
-            margin-top: 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        .recommended-product {
-            padding: 20px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            background-color: #e9f7e9;
-            text-align: center;
-            margin-bottom: 10px;
-        }
-    </style>
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const searchInput = document.querySelector('input[name="query"]');
-            const suggestionsContainer = document.createElement('div');
-            suggestionsContainer.classList.add('autocomplete-suggestions');
-            document.body.appendChild(suggestionsContainer);
-
-            searchInput.addEventListener('input', function () {
-                const query = searchInput.value;
-                if (query.length >= 2) {
-                    fetch(`/autocomplete?query=${query}`)
-                        .then(response => response.json())
-                        .then(data => {
-                            suggestionsContainer.innerHTML = '';
-                            data.forEach(suggestion => {
-                                const suggestionElement = document.createElement('div');
-                                suggestionElement.classList.add('autocomplete-suggestion');
-                                suggestionElement.textContent = suggestion;
-                                suggestionElement.addEventListener('click', function () {
-                                    searchInput.value = suggestion;
-                                    suggestionsContainer.innerHTML = '';
-                                });
-                                suggestionsContainer.appendChild(suggestionElement);
-                            });
-                        });
-                } else {
-                    suggestionsContainer.innerHTML = '';
-                }
-            });
-
-            searchInput.addEventListener('focus', function () {
-                const rect = searchInput.getBoundingClientRect();
-                suggestionsContainer.style.left = `${rect.left}px`;
-                suggestionsContainer.style.top = `${rect.bottom}px`;
-                suggestionsContainer.style.width = `${rect.width}px`;
-            });
-
-            document.addEventListener('click', function (e) {
-                if (!searchInput.contains(e.target) && !suggestionsContainer.contains(e.target)) {
-                    suggestionsContainer.innerHTML = '';
-                }
-            });
-
-            let currentIndex = 0;
-            const products = document.querySelectorAll('.featured-product');
-            if (products.length > 0) {
-                products[currentIndex].classList.add('active');
-                setInterval(() => {
-                    products[currentIndex].classList.remove('active');
-                    currentIndex = (currentIndex + 1) % products.length;
-                    products[currentIndex].classList.add('active');
-                }, 5000);
-            }
-        });
-    </script>
+    <title>Product Recommender</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body>
-    <div class="menu-bar">
-        <!-- Add menu buttons here if needed -->
-    </div>
-
-    <div class="search-container">
+    <div class="container">
+        <h1>Product Recommender</h1>
         <form action="/search" method="get">
-            <input type="text" name="query" placeholder="Search for products">
-            <button type="submit">Search</button>
+            <input type="text" id="search-input" name="query" placeholder="Search for products...">
+            <input type="submit" value="Search">
         </form>
-    </div>
+        <div id="autocomplete-results"></div>
 
-    <div class="featured-products">
-        <div class="featured-products-container">
+        <h2>Featured Products</h2>
+        <div id="featured-products">
             {% for product in featured_products %}
-            <div class="featured-product">
-                <h2>{{ product['deal_title'] }}</h2>
-                <p>{{ product['product_description'] }}</p>
-                <p><strong>Price:</strong> ${{ product['deal_act_price'] }}</p>
-            </div>
+                <div class="product">
+                    <h3>{{ product['deal_title'] }}</h3>
+                    <p>{{ product['product_description'] }}</p>
+                </div>
             {% endfor %}
         </div>
-    </div>
 
-    <div class="top-products">
         <h2>Top Products</h2>
-        {% for product in top_products %}
-        <div class="top-product">
-            <h3>{{ product['deal_title'] }}</h3>
-            <p>{{ product['product_description'] }}</p>
-            <p><strong>Price:</strong> ${{ product['deal_act_price'] }}</p>
+        <div id="top-products">
+            {% for product in top_products %}
+                <div class="product">
+                    <h3>{{ product['deal_title'] }}</h3>
+                    <p>{{ product['product_description'] }}</p>
+                </div>
+            {% endfor %}
         </div>
-        {% endfor %}
+
+        <h2>Recommended Products</h2>
+        <div id="recommended-products">
+            {% for product in recommended_products %}
+                <div class="product">
+                    <h3>{{ product['deal_title'] }}</h3>
+                    <p>{{ product['product_description'] }}</p>
+                </div>
+            {% endfor %}
+        </div>
     </div>
 
-    <div class="recommended-products">
-        <h2>Products You May Also Like</h2>
-        {% if recommended_products %}
-            {% for product in recommended_products %}
-            <div class="recommended-product">
-                <h3>{{ product['deal_title'] }}</h3>
-                <p>{{ product['product_description'] }}</p>
-                <p><strong>Price:</strong> ${{ product['deal_act_price'] }}</p>
-            </div>
-            {% endfor %}
-        {% else %}
-            <p>No recommendations available.</p>
-        {% endif %}
-    </div>
+    <script>
+        $(document).ready(function() {
+            $('#search-input').on('input', function() {
+                let query = $(this).val();
+                if (query.length > 2) {
+                    $.ajax({
+                        url: '/autocomplete',
+                        method: 'GET',
+                        data: { query: query },
+                        success: function(data) {
+                            let results = $('#autocomplete-results');
+                            results.empty();
+                            if (data.length > 0) {
+                                let ul = $('<ul></ul>');
+                                data.forEach(function(item) {
+                                    ul.append('<li>' + item + '</li>');
+                                });
+                                results.append(ul);
+                            }
+                        }
+                    });
+                } else {
+                    $('#autocomplete-results').empty();
+                }
+            });
+
+            $('#autocomplete-results').on('click', 'li', function() {
+                $('#search-input').val($(this).text());
+                $('#autocomplete-results').empty();
+            });
+        });
+    </script>
 </body>
 </html>

@@ -4,23 +4,24 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Search Results</title>
+    <style>
+        /* Add your CSS styles here */
+    </style>
 </head>
 <body>
     <h1>Search Results for "{{ query }}"</h1>
-    <a href="/">Go back to home</a>
-    <ul>
-        {% for index, row in results.iterrows() %}
-            <li>
-                <h2>{{ row.deal_title }}</h2>
-                <p>Price: {{ row.deal_act_price }}</p>
-                <p>Rating: {{ row.deal_rating }} ({{ row.deal_rating_count }} reviews)</p>
-                <a href="{{ row.deal_url }}">View Deal</a>
-                <img src="{{ row.deal_image_url }}" alt="{{ row.deal_title }}">
-            </li>
-        {% endfor %}
-    </ul>
-    {% if results.empty %}
-        <p>No results found</p>
-    {% endif %}
+    <div class="search-results">
+        {% if results.empty %}
+            <p>No results found.</p>
+        {% else %}
+            {% for index, result in results.iterrows() %}
+            <div class="search-result">
+                <h2>{{ result['deal_title'] }}</h2>
+                <p>{{ result['product_description'] }}</p>
+                <p><strong>Price:</strong> ${{ result['deal_act_price'] }}</p>
+            </div>
+            {% endfor %}
+        {% endif %}
+    </div>
 </body>
 </html>

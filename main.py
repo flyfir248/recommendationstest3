@@ -1,5 +1,5 @@
-import random
-import logging
+import logging  # Import the logging module
+import csv
 from flask import Flask, render_template, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
@@ -31,7 +31,7 @@ with app.app_context():
     db.create_all()
 
 # Load the CSV data
-data = pd.read_csv('amz_fpkt_data.csv')
+data = pd.read_csv('C:/Users/anoop/PycharmProjects/recommendertest3/amz_fpkt_data.csv')
 
 def calculate_scores(data):
     data['product_description'] = data['product_description'].fillna('')
@@ -53,18 +53,31 @@ def calculate_scores(data):
 
 data = calculate_scores(data)
 
+def save_search_to_csv(query):
+    with open('search_queries.csv', 'a', newline='', encoding='utf-8') as file:
+        writer = csv.writer(file)
+        writer.writerow([query, datetime.utcnow()])
+
+def load_search_queries():
+    try:
+        search_data = pd.read_csv('search_queries.csv', names=['query', 'timestamp'], parse_dates=['timestamp'])
+        return search_data
+    except FileNotFoundError:
+        return pd.DataFrame(columns=['query', 'timestamp'])
+
 def get_recommendations():
     try:
-        latest_search = SearchQuery.query.order_by(SearchQuery.timestamp.desc()).first()
-        if not latest_search:
+        search_data = load_search_queries()
+        if search_data.empty:
             logging.info("No recent search found.")
             return []
 
-        logging.info(f"Latest search query: {latest_search.query}")
+        latest_search = search_data.iloc[-1]
+        logging.info(f"Latest search query: {latest_search['query']}")
 
         tfidf_vectorizer = TfidfVectorizer()
         tfidf_matrix = tfidf_vectorizer.fit_transform(data['product_description'])
-        search_vector = tfidf_vectorizer.transform([latest_search.query])
+        search_vector = tfidf_vectorizer.transform([latest_search['query']])
         cosine_similarities = cosine_similarity(search_vector, tfidf_matrix).flatten()
         similar_indices = cosine_similarities.argsort()[:-6:-1]
         recommended_products = data.iloc[similar_indices].to_dict(orient='records')
@@ -82,7 +95,7 @@ def home():
         sorted_data = data.sort_values(by='score', ascending=False)
         featured_products = sorted_data.sample(n=5).to_dict(orient='records')
         top_products = sorted_data.head(5).to_dict(orient='records')
-        recommended_products = get_recommendations()  # Fetch recommended products here
+        recommended_products = get_recommendations()
 
         return render_template('index.html', featured_products=featured_products, top_products=top_products, recommended_products=recommended_products)
     except Exception as e:
@@ -93,9 +106,7 @@ def home():
 def search():
     query = request.args.get('query')
     if query:
-        new_query = SearchQuery(query=query)
-        db.session.add(new_query)
-        db.session.commit()
+        save_search_to_csv(query)
         results = data[data['deal_title'].str.contains(query, case=False, na=False)]
     else:
         results = pd.DataFrame()

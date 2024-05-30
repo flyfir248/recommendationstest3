@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Categories</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <header>
+        <h1>Product Categories</h1>
+    </header>
+    <nav class="menu-bar">
+        <button onclick="window.location.href='/'">Home</button>
+        <button onclick="window.location.href='/categories'">Categories</button>
+        <button onclick="window.location.href='/deals'">Deals</button>
+        <button onclick="window.location.href='/contact'">Contact</button>
+    </nav>
+    <h1>Categories</h1>
+    <ul>
+        {% for category in categories %}
+            <li><a href="{{ url_for('show_category', category_name=category) }}">{{ category }}</a></li>
+        {% endfor %}
+    </ul>
+</body>
+</html>

@@ -1,4 +1,4 @@
-import logging  # Import the logging module
+import logging
 import csv
 from flask import Flask, render_template, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
@@ -6,6 +6,7 @@ from datetime import datetime
 import pandas as pd
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
+import os
 
 app = Flask(__name__)
 
@@ -120,6 +121,42 @@ def autocomplete():
     else:
         suggestions = []
     return jsonify(suggestions)
+
+# Path to the directory containing categorized CSVs
+CATEGORIES_PATH = 'C:/Users/anoop/PycharmProjects/recommendertest3/dataframecategories'
+
+# Load all categories and their CSVs
+def load_categories():
+    categories = {}
+    for filename in os.listdir(CATEGORIES_PATH):
+        if filename.endswith('.csv'):
+            category_name = filename[:-4]
+            categories[category_name] = os.path.join(CATEGORIES_PATH, filename)
+    return categories
+
+categories = load_categories()
+
+@app.route('/categories')
+def list_categories():
+    return render_template('categories.html', categories=categories.keys())
+
+@app.route('/category/<category_name>')
+def show_category(category_name):
+    csv_path = categories.get(category_name)
+    if csv_path:
+        df = pd.read_csv(csv_path)
+        products = df.to_dict(orient='records')
+        return render_template('category.html', category_name=category_name, products=products)
+    else:
+        return "Category not found", 404
+
+@app.route('/deals')
+def deals():
+    return "Deals page"  # Implement deals logic here
+
+@app.route('/contact')
+def contact():
+    return "Contact page"  # Implement contact logic here
 
 if __name__ == '__main__':
     app.run(debug=False)

@@ -7,18 +7,29 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body>
-    <div class="container">
+    <header>
         <h1>Product Recommender</h1>
-        <form action="/search" method="get">
-            <input type="text" id="search-input" name="query" placeholder="Search for products...">
-            <input type="submit" value="Search">
-        </form>
-        <div id="autocomplete-results"></div>
+    </header>
+    <nav class="menu-bar">
+        <button>Home</button>
+        <button>Categories</button>
+        <button>Deals</button>
+        <button>Contact</button>
+    </nav>
+    <div class="container">
+        <div class="search-container">
+            <form action="/search" method="get">
+                <input type="text" id="search-input" name="query" placeholder="Search for products...">
+                <button type="submit">Search</button>
+            </form>
+            <div id="autocomplete-results" class="autocomplete-suggestions"></div>
+        </div>
 
         <h2>Featured Products</h2>
-        <div id="featured-products">
+        <div class="featured-products-container">
             {% for product in featured_products %}
-                <div class="product">
+                <div class="product-card">
+                    <img src="{{ product['image_url'] }}" alt="{{ product['deal_title'] }}">
                     <h3>{{ product['deal_title'] }}</h3>
                     <p>{{ product['product_description'] }}</p>
                 </div>
@@ -26,9 +37,10 @@
         </div>
 
         <h2>Top Products</h2>
-        <div id="top-products">
+        <div class="top-products-container">
             {% for product in top_products %}
-                <div class="product">
+                <div class="product-card">
+                    <img src="{{ product['image_url'] }}" alt="{{ product['deal_title'] }}">
                     <h3>{{ product['deal_title'] }}</h3>
                     <p>{{ product['product_description'] }}</p>
                 </div>
@@ -36,9 +48,10 @@
         </div>
 
         <h2>Recommended Products</h2>
-        <div id="recommended-products">
+        <div class="top-products-container">
             {% for product in recommended_products %}
-                <div class="product">
+                <div class="product-card">
+                    <img src="{{ product['image_url'] }}" alt="{{ product['deal_title'] }}">
                     <h3>{{ product['deal_title'] }}</h3>
                     <p>{{ product['product_description'] }}</p>
                 </div>

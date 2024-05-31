@@ -32,7 +32,7 @@ with app.app_context():
     db.create_all()
 
 # Load the CSV data
-data = pd.read_csv('C:/Users/anoop/PycharmProjects/recommendertest3/amz_fpkt_data.csv')
+data = pd.read_csv('amz_fpkt_data.csv')
 
 def calculate_scores(data):
     data['product_description'] = data['product_description'].fillna('')
@@ -123,7 +123,7 @@ def autocomplete():
     return jsonify(suggestions)
 
 # Path to the directory containing categorized CSVs
-CATEGORIES_PATH = 'C:/Users/anoop/PycharmProjects/recommendertest3/dataframecategories'
+CATEGORIES_PATH = 'dataframecategories'
 
 # Load all categories and their CSVs
 def load_categories():

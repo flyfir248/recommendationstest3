@@ -25,13 +25,20 @@ folder_path = 'dataframecategories'
 if not os.path.exists(folder_path):
     os.makedirs(folder_path)
 
+# Function to sanitize category names
+def sanitize_category_name(category_name):
+    # Remove unwanted characters and replace spaces with underscores
+    return re.sub(r'[^\w\s-]', '', category_name).replace(' ', '_')
+
 # Create and save separate CSV files for each unique category
 for category in unique_categories:
     # Escape special characters in the category name
     escaped_category = re.escape(category)
     # Filter rows that belong to the current category
     category_df = df[df['category_all'].str.contains(escaped_category)]
+    # Sanitize the category name for the filename
+    sanitized_category_name = sanitize_category_name(category)
     # Save the DataFrame as a CSV file in the folder
-    file_path = os.path.join(folder_path, f"{category}.csv")
+    file_path = os.path.join(folder_path, f"{sanitized_category_name}.csv")
     category_df.to_csv(file_path, index=False)
-    print(f"Saved {category}.csv in dataframecategories folder.")
+    print(f"Saved {sanitized_category_name}.csv in dataframecategories folder.")

@@ -2,28 +2,28 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>{{ category_name }} Products</title>
-    <link rel="stylesheet" href="static/style.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ category_name }}</title>
+    <!-- Include Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 </head>
 <body>
-    <header>
-        <h1>{{ category_name }} Products</h1>
-    </header>
-    <nav class="menu-bar">
-        <button onclick="window.location.href='/'">Home</button>
-        <button onclick="window.location.href='/categories'">Categories</button>
-        <button onclick="window.location.href='/deals'">Deals</button>
-        <button onclick="window.location.href='/contact'">Contact</button>
-    </nav>
-    <h1>{{ category_name }}</h1>
-    <div class="product-list">
-        {% for product in products %}
-            <div class="product">
-                <h2>{{ product['name'] }}</h2>
-                <p>{{ product['description'] }}</p>
-                <p>Price: {{ product['price'] }}</p>
+    <div class="container">
+        <h1>{{ category_name }}</h1>
+        <div class="row">
+            {% for product in products %}
+            <div class="col-md-4">
+                <div class="card mb-4">
+                    <img src="{{ product.image_url }}" class="card-img-top" alt="{{ product.deal_title }}">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ product.deal_title }}</h5>
+                        <p class="card-text">{{ product.product_description }}</p>
+                        <a href="{{ product.deal_url }}" class="btn btn-primary">View Product</a>
+                    </div>
+                </div>
             </div>
-        {% endfor %}
+            {% endfor %}
+        </div>
     </div>
 </body>
 </html>

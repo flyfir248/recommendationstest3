@@ -1,25 +1,25 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Categories</title>
-    <link rel="stylesheet" href="static/style.css">
-</head>
-<body>
-    <header>
-        <h1>Product Categories</h1>
-    </header>
-    <nav class="menu-bar">
-        <button onclick="window.location.href='/'">Home</button>
-        <button onclick="window.location.href='/categories'">Categories</button>
-        <button onclick="window.location.href='/deals'">Deals</button>
-        <button onclick="window.location.href='/contact'">Contact</button>
-    </nav>
-    <h1>Categories</h1>
-    <ul>
+{% extends "base.html" %}
+
+{% block title %}Categories{% endblock %}
+
+{% block content %}
+<header>
+    <h1>Product Categories</h1>
+</header>
+
+<h1>Categories</h1>
+<div class="container">
+    <div class="row">
         {% for category in categories %}
-            <li><a href="{{ url_for('show_category', category_name=category) }}">{{ category }}</a></li>
+        <div class="col-md-4">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">{{ category }}</h5>
+                    <a href="{{ url_for('show_category', category_name=category) }}" class="btn btn-primary">View Products</a>
+                </div>
+            </div>
+        </div>
         {% endfor %}
-    </ul>
-</body>
-</html>
+    </div>
+</div>
+{% endblock %}

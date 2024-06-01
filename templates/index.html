@@ -26,6 +26,17 @@
             <div id="autocomplete-results" class="autocomplete-suggestions"></div>
         </div>
 
+        <h2>Recommended Products</h2>
+        <div class="top-products-container">
+            {% for product in recommended_products %}
+                <div class="product-card">
+                    <img src="{{ product['image_url'] }}" alt="{{ product['deal_title'] }}">
+                    <h3>{{ product['deal_title'] }}</h3>
+                    <p>{{ product['product_description'] }}</p>
+                </div>
+            {% endfor %}
+        </div>
+
         <h2>Featured Products</h2>
         <div class="featured-products-container">
             {% for product in featured_products %}
@@ -48,16 +59,6 @@
             {% endfor %}
         </div>
 
-        <h2>Recommended Products</h2>
-        <div class="top-products-container">
-            {% for product in recommended_products %}
-                <div class="product-card">
-                    <img src="{{ product['image_url'] }}" alt="{{ product['deal_title'] }}">
-                    <h3>{{ product['deal_title'] }}</h3>
-                    <p>{{ product['product_description'] }}</p>
-                </div>
-            {% endfor %}
-        </div>
     </div>
 
     <script>

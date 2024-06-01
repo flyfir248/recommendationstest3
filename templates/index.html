@@ -1,97 +1,101 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Product Recommender</title>
-    <link rel="stylesheet" href="static/style.css">
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-</head>
-<body>
-    <header>
-        <h1>Product Recommender</h1>
-    </header>
-        <nav class="menu-bar">
-        <button onclick="window.location.href='/'">Home</button>
-        <button onclick="window.location.href='/categories'">Categories</button>
-        <button onclick="window.location.href='/deals'">Deals</button>
-        <button onclick="window.location.href='/contact'">Contact</button>
-    </nav>
-    <h1>Welcome to our e-commerce site!</h1>
-    <div class="container">
-        <div class="search-container">
-            <form action="/search" method="get">
-                <input type="text" id="search-input" name="query" placeholder="Search for products...">
-                <button type="submit">Search</button>
-            </form>
-            <div id="autocomplete-results" class="autocomplete-suggestions"></div>
-        </div>
+{% extends "base.html" %}
 
-        <h2>Recommended Products</h2>
-        <div class="top-products-container">
-            {% for product in recommended_products %}
-                <div class="product-card">
-                    <img src="{{ product['image_url'] }}" alt="{{ product['deal_title'] }}">
-                    <h3>{{ product['deal_title'] }}</h3>
-                    <p>{{ product['product_description'] }}</p>
-                </div>
-            {% endfor %}
-        </div>
+{% block title %}Product Recommender{% endblock %}
 
-        <h2>Featured Products</h2>
-        <div class="featured-products-container">
-            {% for product in featured_products %}
-                <div class="product-card">
-                    <img src="{{ product['image_url'] }}" alt="{{ product['deal_title'] }}">
-                    <h3>{{ product['deal_title'] }}</h3>
-                    <p>{{ product['product_description'] }}</p>
-                </div>
-            {% endfor %}
-        </div>
+{% block content %}
+<header>
+    <h1>Product Recommender</h1>
+</header>
 
-        <h2>Top Products</h2>
-        <div class="top-products-container">
-            {% for product in top_products %}
-                <div class="product-card">
-                    <img src="{{ product['image_url'] }}" alt="{{ product['deal_title'] }}">
-                    <h3>{{ product['deal_title'] }}</h3>
-                    <p>{{ product['product_description'] }}</p>
-                </div>
-            {% endfor %}
-        </div>
-
+<h1>Welcome to our e-commerce site!</h1>
+<div class="container">
+    <div class="search-container">
+        <form action="/search" method="get">
+            <input type="text" id="search-input" name="query" placeholder="Search for products...">
+            <button type="submit">Search</button>
+        </form>
+        <div id="autocomplete-results" class="autocomplete-suggestions"></div>
     </div>
 
-    <script>
-        $(document).ready(function() {
-            $('#search-input').on('input', function() {
-                let query = $(this).val();
-                if (query.length > 2) {
-                    $.ajax({
-                        url: '/autocomplete',
-                        method: 'GET',
-                        data: { query: query },
-                        success: function(data) {
-                            let results = $('#autocomplete-results');
-                            results.empty();
-                            if (data.length > 0) {
-                                let ul = $('<ul></ul>');
-                                data.forEach(function(item) {
-                                    ul.append('<li>' + item + '</li>');
-                                });
-                                results.append(ul);
-                            }
-                        }
-                    });
-                } else {
-                    $('#autocomplete-results').empty();
-                }
-            });
+    <h2>Recommended Products</h2>
+    <div class="row">
+        {% for product in recommended_products %}
+        <div class="col-md-4">
+            <div class="card mb-4">
+                <img src="{{ product.image_url or 'https://via.placeholder.com/150' }}" class="card-img-top" alt="{{ product.deal_title }}">
+                <div class="card-body">
+                    <h5 class="card-title">{{ product.deal_title }}</h5>
+                    <p class="card-text">{{ product.product_description }}</p>
+                    <a href="{{ product.deal_url }}" class="btn btn-primary">View Product</a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
 
-            $('#autocomplete-results').on('click', 'li', function() {
-                $('#search-input').val($(this).text());
+    <h2>Featured Products</h2>
+    <div class="row">
+        {% for product in featured_products %}
+        <div class="col-md-4">
+            <div class="card mb-4">
+                <img src="{{ product.image_url or 'https://via.placeholder.com/150' }}" class="card-img-top" alt="{{ product.deal_title }}">
+                <div class="card-body">
+                    <h5 class="card-title">{{ product.deal_title }}</h5>
+                    <p class="card-text">{{ product.product_description }}</p>
+                    <a href="{{ product.deal_url }}" class="btn btn-primary">View Product</a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <h2>Top Products</h2>
+    <div class="row">
+        {% for product in top_products %}
+        <div class="col-md-4">
+            <div class="card mb-4">
+                <img src="{{ product.image_url or 'https://via.placeholder.com/150' }}" class="card-img-top" alt="{{ product.deal_title }}">
+                <div class="card-body">
+                    <h5 class="card-title">{{ product.deal_title }}</h5>
+                    <p class="card-text">{{ product.product_description }}</p>
+                    <a href="{{ product.deal_url }}" class="btn btn-primary">View Product</a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<script>
+    $(document).ready(function() {
+        $('#search-input').on('input', function() {
+            let query = $(this).val();
+            if (query.length > 2) {
+                $.ajax({
+                    url: '/autocomplete',
+                    method: 'GET',
+                    data: { query: query },
+                    success: function(data) {
+                        let results = $('#autocomplete-results');
+                        results.empty();
+                        if (data.length > 0) {
+                            let ul = $('<ul></ul>');
+                            data.forEach(function(item) {
+                                ul.append('<li>' + item + '</li>');
+                            });
+                            results.append(ul);
+                        }
+                    }
+                });
+            } else {
                 $('#autocomplete-results').empty();
-            });
+            }
         });
-    </script>
-</body>
-</html>
+
+        $('#autocomplete-results').on('click', 'li', function() {
+            $('#search-input').val($(this).text());
+            $('#autocomplete-results').empty();
+        });
+    });
+</script>
+{% endblock %}

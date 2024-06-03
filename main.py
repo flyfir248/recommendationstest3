@@ -1,12 +1,17 @@
 import logging
 import csv
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request, redirect, url_for, jsonify
 from flask_sqlalchemy import SQLAlchemy
+from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
+from flask_bcrypt import Bcrypt
 from datetime import datetime
 import pandas as pd
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 import os
+from flask_wtf import FlaskForm
+from wtforms import StringField, PasswordField, SubmitField
+from wtforms.validators import DataRequired, Email, EqualTo, ValidationError
 
 app = Flask(__name__)
 
@@ -16,13 +21,32 @@ logging.basicConfig(filename='app.log', level=logging.INFO, format='%(asctime)s:
 # Configure SQLAlchemy
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///search_data.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config['SECRET_KEY'] = 'your_secret_key'
 db = SQLAlchemy(app)
+bcrypt = Bcrypt(app)
+
+# Setup Flask-Login
+login_manager = LoginManager()
+login_manager.init_app(app)
+login_manager.login_view = 'login'
+
+# Define the User model
+class User(UserMixin, db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(150), unique=True, nullable=False)
+    email = db.Column(db.String(150), unique=True, nullable=False)
+    password = db.Column(db.String(150), nullable=False)
+
+    def __repr__(self):
+        return f'<User {self.username}>'
 
 # Define the SearchQuery model
 class SearchQuery(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     query = db.Column(db.String(200), nullable=False)
     timestamp = db.Column(db.DateTime, default=datetime.utcnow)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    user = db.relationship('User', backref=db.backref('search_queries', lazy=True))
 
     def __repr__(self):
         return f'<SearchQuery {self.query}>'
@@ -90,7 +114,66 @@ def get_recommendations():
         logging.error(f"Error getting recommendations: {e}")
         return []
 
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.get(int(user_id))
+
+class RegistrationForm(FlaskForm):
+    username = StringField('Username', validators=[DataRequired()])
+    email = StringField('Email', validators=[DataRequired(), Email()])
+    password = PasswordField('Password', validators=[DataRequired()])
+    confirm_password = PasswordField('Confirm Password', validators=[DataRequired(), EqualTo('password')])
+    submit = SubmitField('Sign Up')
+
+    def validate_username(self, username):
+        user = User.query.filter_by(username=username.data).first()
+        if user:
+            raise ValidationError('Username is already taken. Please choose a different one.')
+
+    def validate_email(self, email):
+        user = User.query.filter_by(email=email.data).first()
+        if user:
+            raise ValidationError('Email is already registered. Please choose a different one.')
+
+class LoginForm(FlaskForm):
+    email = StringField('Email', validators=[DataRequired(), Email()])
+    password = PasswordField('Password', validators=[DataRequired()])
+    submit = SubmitField('Login')
+
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    form = RegistrationForm()
+    if form.validate_on_submit():
+        hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
+        user = User(username=form.username.data, email=form.email.data, password=hashed_password)
+        db.session.add(user)
+        db.session.commit()
+        logging.info(f'New user registered: {user.username}')
+        return redirect(url_for('login'))
+    return render_template('register.html', form=form)
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    form = LoginForm()
+    if form.validate_on_submit():
+        user = User.query.filter_by(email=form.email.data).first()
+        if user and bcrypt.check_password_hash(user.password, form.password.data):
+            login_user(user)
+            logging.info(f'User logged in: {user.username}')
+            return redirect(url_for('home'))
+        else:
+            logging.warning('Failed login attempt')
+    return render_template('login.html', form=form)
+
+@app.route('/logout')
+@login_required
+def logout():
+    logging.info(f'User logged out: {current_user.username}')
+    logout_user()
+    return redirect(url_for('home'))
+
 @app.route('/')
+@login_required
 def home():
     try:
         sorted_data = data.sort_values(by='score', ascending=False)
@@ -98,22 +181,26 @@ def home():
         top_products = sorted_data.head(5).to_dict(orient='records')
         recommended_products = get_recommendations()
 
+        logging.info(f"User {current_user.username} accessed home page")
         return render_template('index.html', featured_products=featured_products, top_products=top_products, recommended_products=recommended_products)
     except Exception as e:
         logging.error(f"Error in home route: {e}")
         return "Internal Server Error", 500
 
 @app.route('/search', methods=['GET'])
+@login_required
 def search():
     query = request.args.get('query')
     if query:
         save_search_to_csv(query)
         results = data[data['deal_title'].str.contains(query, case=False, na=False)]
+        logging.info(f"User {current_user.username} searched for '{query}'")
     else:
         results = pd.DataFrame()
     return render_template('search.html', query=query, results=results)
 
 @app.route('/autocomplete', methods=['GET'])
+@login_required
 def autocomplete():
     query = request.args.get('query', '')
     if query:
@@ -137,10 +224,12 @@ def load_categories():
 categories = load_categories()
 
 @app.route('/categories')
+@login_required
 def list_categories():
     return render_template('categories.html', categories=categories.keys())
 
 @app.route('/category/<category_name>')
+@login_required
 def show_category(category_name):
     csv_path = categories.get(category_name)
     if csv_path:
@@ -151,10 +240,12 @@ def show_category(category_name):
         return "Category not found", 404
 
 @app.route('/deals')
+@login_required
 def deals():
     return "Deals page"  # Implement deals logic here
 
 @app.route('/contact')
+@login_required
 def contact():
     return "Contact page"  # Implement contact logic here
 

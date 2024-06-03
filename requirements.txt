@@ -4,3 +4,7 @@ requests
 gunicorn
 scikit-learn
 flask-sqlalchemy
+flask-wtf
+Flask-Bcrypt
+Flask-Login
+email-validator

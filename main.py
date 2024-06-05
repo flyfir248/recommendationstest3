@@ -209,6 +209,18 @@ def autocomplete():
         suggestions = []
     return jsonify(suggestions)
 
+@app.route('/category_filters', methods=['GET'])
+@login_required
+def category_filters():
+    category = request.args.get('category')
+    csv_path = categories.get(category)
+    if csv_path:
+        df = pd.read_csv(csv_path)
+        filters = df.columns.tolist()  # Assuming the first row contains filter names
+        return jsonify({'filters': filters})
+    else:
+        return jsonify({'filters': []})
+
 # Path to the directory containing categorized CSVs
 CATEGORIES_PATH = 'dataframecategories'
 

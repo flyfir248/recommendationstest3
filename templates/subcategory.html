@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block title %}Subcategory: {{ subcategory_name }}{% endblock %}
+
+{% block content %}
+    <h1>{{ subcategory_name }}</h1>
+    <ul class="breadcrumb">
+        <li><a href="/">Home</a></li>
+        <li><a href="/category/{{ category_name }}">{{ category_name }}</a></li>
+        <li>{{ subcategory_name }}</li>
+    </ul>
+    <h2>Products</h2>
+    <ul>
+        {% for product in products %}
+            <li>{{ product['product_name'] }}</li>
+        {% endfor %}
+    </ul>
+{% endblock %}

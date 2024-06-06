@@ -1,0 +1,15 @@
+<nav class="menu-bar">
+    <button class="openbtn" onclick="openNav()">☰ Open Sidebar</button>
+    <button onclick="window.location.href='/'">Home</button>
+    <button onclick="window.location.href='/categories'">Categories</button>
+    <button onclick="window.location.href='/deals'">Deals</button>
+    <button onclick="window.location.href='/contact'">Contact</button>
+    <button onclick="window.location.href='/wishlist'">Wishlist</button>
+    <button onclick="window.location.href='/cart'">Cart</button>
+    {% if current_user.is_authenticated %}
+    <button onclick="window.location.href='/logout'">Logout</button>
+    {% else %}
+    <button onclick="window.location.href='/login'">Login</button>
+    <button onclick="window.location.href='/register'">Register</button>
+    {% endif %}
+</nav>

@@ -149,6 +149,7 @@
             <button onclick="window.location.href='/deals'">Deals</button>
             <button onclick="window.location.href='/contact'">Contact</button>
             {% if current_user.is_authenticated %}
+            <button onclick="window.location.href='/profile'">Profile</button>
             <button onclick="window.location.href='/logout'">Logout</button>
             {% else %}
             <button onclick="window.location.href='/login'">Login</button>

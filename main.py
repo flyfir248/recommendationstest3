@@ -1,6 +1,6 @@
 import logging
 import csv
-from flask import Flask, render_template, request, redirect, url_for, jsonify
+from flask import Flask, render_template, request, redirect, url_for, jsonify, session
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 from flask_bcrypt import Bcrypt
@@ -152,6 +152,7 @@ class Wishlist(db.Model):
     product_id = db.Column(db.Integer, nullable=False)
     user = db.relationship('User', backref=db.backref('wishlist_items', lazy=True))
 
+
 # Create the new tables
 with app.app_context():
     db.create_all()
@@ -166,6 +167,24 @@ def add_to_cart(product_id):
         db.session.add(cart_item)
     db.session.commit()
     return redirect(url_for('cart'))
+
+
+@app.route('/profile')
+@login_required
+def profile():
+    # Fetch cart items for the current user
+    cart_items = Cart.query.filter_by(user_id=current_user.id).all()
+    wishlist_items = Wishlist.query.filter_by(user_id=current_user.id).all()
+
+    # Calculate total amount
+    total_amount = 0
+    for item in cart_items:
+        product = data[data['id'] == item.product_id].iloc[0]
+        total_amount += product['price'] * item.quantity
+
+    return render_template('profile.html', cart_items=cart_items, wishlist_items=wishlist_items,
+                           total_amount=total_amount)
+
 
 @app.route('/cart')
 @login_required

@@ -156,17 +156,17 @@ class Wishlist(db.Model):
 # Create the new tables
 with app.app_context():
     db.create_all()
-@app.route('/add_to_cart/<int:product_id>', methods=['POST'])
+@app.route('/add_to_cart', methods=['POST'])
 @login_required
-def add_to_cart(product_id):
-    cart_item = Cart.query.filter_by(user_id=current_user.id, product_id=product_id).first()
-    if cart_item:
-        cart_item.quantity += 1
-    else:
+def add_to_cart():
+    product_id = request.json.get('product_id')
+    if product_id:
         cart_item = Cart(user_id=current_user.id, product_id=product_id)
         db.session.add(cart_item)
-    db.session.commit()
-    return redirect(url_for('cart'))
+        db.session.commit()
+        return jsonify({'success': True}), 200
+    return jsonify({'success': False}), 400
+
 
 
 @app.route('/profile')
@@ -193,15 +193,16 @@ def cart():
     products = [{'product_id': item.product_id, 'quantity': item.quantity} for item in cart_items]
     return render_template('cart.html', products=products)
 
-@app.route('/add_to_wishlist/<int:product_id>', methods=['POST'])
+@app.route('/add_to_wishlist', methods=['POST'])
 @login_required
-def add_to_wishlist(product_id):
-    wishlist_item = Wishlist.query.filter_by(user_id=current_user.id, product_id=product_id).first()
-    if not wishlist_item:
+def add_to_wishlist():
+    product_id = request.json.get('product_id')
+    if product_id:
         wishlist_item = Wishlist(user_id=current_user.id, product_id=product_id)
         db.session.add(wishlist_item)
-    db.session.commit()
-    return redirect(url_for('wishlist'))
+        db.session.commit()
+        return jsonify({'success': True}), 200
+    return jsonify({'success': False}), 400
 
 @app.route('/wishlist')
 @login_required

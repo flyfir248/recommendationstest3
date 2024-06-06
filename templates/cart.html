@@ -1,22 +1,29 @@
+<!-- cart.html -->
 {% extends "base.html" %}
-{% block title %}Cart{% endblock %}
+
+{% block title %}My Cart{% endblock %}
+
 {% block content %}
-<h2>My Cart</h2>
-<div class="row">
-    {% for product in products %}
-    <div class="col-md-4">
-        <div class="card mb-4">
-            <img src="{{ product.image_url or 'https://via.placeholder.com/150' }}" class="card-img-top" alt="{{ product.deal_title }}">
-            <div class="card-body">
-                <h5 class="card-title">{{ product.deal_title }}</h5>
-                <p class="card-text">{{ product.product_description }}</p>
-                <p>Quantity: {{ product.quantity }}</p>
-                <form action="{{ url_for('remove_from_cart', product_id=product.product_id) }}" method="post">
-                    <button type="submit" class="btn btn-danger">Remove</button>
-                </form>
+<header>
+    <h1>My Cart</h1>
+</header>
+<main>
+    {% if cart_items %}
+        <div class="row">
+            {% for item in cart_items %}
+            <div class="col-md-4">
+                <div class="card mb-4">
+                    <img src="{{ item.product_image }}" class="card-img-top" alt="{{ item.product_title }}">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ item.product_title }}</h5>
+                        <p class="card-text"><strong>Price:</strong> ${{ item.product_price }}</p>
+                    </div>
+                </div>
             </div>
+            {% endfor %}
         </div>
-    </div>
-    {% endfor %}
-</div>
+    {% else %}
+        <p>No items in your cart.</p>
+    {% endif %}
+</main>
 {% endblock %}

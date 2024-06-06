@@ -135,10 +135,11 @@
     <div id="mySidebar" class="sidebar">
         <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">×</a>
         <a href="#" class="category-link" data-category="all">All Products</a>
-        <!-- Categories will be dynamically loaded -->
         {% for category in categories %}
         <a href="{{ url_for('show_category', category_name=category) }}" class="category-link" data-category="{{ category }}">{{ category }}</a>
         {% endfor %}
+        <a href="{{ url_for('wishlist') }}">Wishlist</a>
+        <a href="{{ url_for('cart') }}">My Cart</a>
     </div>
 
     <div id="main">

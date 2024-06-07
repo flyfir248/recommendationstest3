@@ -1,4 +1,3 @@
-<!-- cart.html -->
 {% extends "base.html" %}
 
 {% block title %}My Cart{% endblock %}
@@ -17,6 +16,10 @@
                     <div class="card-body">
                         <h5 class="card-title">{{ item.product_title }}</h5>
                         <p class="card-text"><strong>Price:</strong> ${{ item.product_price }}</p>
+                        <p class="card-text"><strong>Quantity:</strong> {{ item.quantity }}</p>
+                        <form action="{{ url_for('remove_from_cart', product_id=item.product_id) }}" method="post">
+                            <button type="submit" class="btn btn-danger">Remove from Cart</button>
+                        </form>
                     </div>
                 </div>
             </div>

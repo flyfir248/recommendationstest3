@@ -36,7 +36,7 @@
                 <p class="card-text">{{ product.product_description }}</p>
                 <a href="{{ product.deal_url }}" class="btn btn-primary">View Product</a>
                 <button class="btn btn-success add-to-cart" data-id="{{ product.id }}" data-name="{{ product.deal_title }}" data-price="{{ product.price }}" data-image="{{ product.image_url }}">Add to Cart</button>
-                <button class="btn btn-warning" onclick="addToWishlist('{{ product.id }}')">Add to Wishlist</button>
+                <button class="btn btn-warning add-to-wishlist" data-id="{{ product.id }}" data-name="{{ product.deal_title }}" data-price="{{ product.price }}" data-image="{{ product.image_url }}">Add to Wishlist</button>
             </div>
         </div>
     </div>
@@ -54,7 +54,7 @@
                 <p class="card-text">{{ product.product_description }}</p>
                 <a href="{{ product.deal_url }}" class="btn btn-primary">View Product</a>
                 <button class="btn btn-success add-to-cart" data-id="{{ product.id }}" data-name="{{ product.deal_title }}" data-price="{{ product.price }}" data-image="{{ product.image_url }}">Add to Cart</button>
-                <button class="btn btn-warning" onclick="addToWishlist('{{ product.id }}')">Add to Wishlist</button>
+                <button class="btn btn-warning add-to-wishlist" data-id="{{ product.id }}" data-name="{{ product.deal_title }}" data-price="{{ product.price }}" data-image="{{ product.image_url }}">Add to Wishlist</button>
             </div>
         </div>
     </div>
@@ -72,7 +72,7 @@
                 <p class="card-text">{{ product.product_description }}</p>
                 <a href="{{ product.deal_url }}" class="btn btn-primary">View Product</a>
                 <button class="btn btn-success add-to-cart" data-id="{{ product.id }}" data-name="{{ product.deal_title }}" data-price="{{ product.price }}" data-image="{{ product.image_url }}">Add to Cart</button>
-                <button class="btn btn-warning" onclick="addToWishlist('{{ product.id }}')">Add to Wishlist</button>
+                <button class="btn btn-warning add-to-wishlist" data-id="{{ product.id }}" data-name="{{ product.deal_title }}" data-price="{{ product.price }}" data-image="{{ product.image_url }}">Add to Wishlist</button>
             </div>
         </div>
     </div>
@@ -152,6 +152,21 @@ $(document).ready(function() {
         cart.push(product);
         localStorage.setItem('cart', JSON.stringify(cart));
         alert('Product added to cart!');
+    });
+
+    // Add to wishlist functionality
+    $('.add-to-wishlist').on('click', function() {
+        const product = {
+            id: $(this).data('id'),
+            name: $(this).data('name'),
+            price: $(this).data('price'),
+            image: $(this).data('image')
+        };
+        let wishlist = localStorage.getItem('wishlist');
+        wishlist = wishlist ? JSON.parse(wishlist) : [];
+        wishlist.push(product);
+        localStorage.setItem('wishlist', JSON.stringify(wishlist));
+        alert('Product added to wishlist!');
     });
 });
 

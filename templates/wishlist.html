@@ -7,25 +7,39 @@
     <h1>My Wishlist</h1>
 </header>
 <main>
-    {% if wishlist_items %}
-        <div class="row">
-            {% for item in wishlist_items %}
-            <div class="col-md-4">
-                <div class="card mb-4">
-                    <img src="{{ item.product_image }}" class="card-img-top" alt="{{ item.product_title }}">
-                    <div class="card-body">
-                        <h5 class="card-title">{{ item.product_title }}</h5>
-                        <p class="card-text"><strong>Price:</strong> ${{ item.product_price }}</p>
-                        <form action="{{ url_for('remove_from_wishlist', product_id=item.product_id) }}" method="post">
-                            <button type="submit" class="btn btn-danger">Remove from Wishlist</button>
-                        </form>
-                    </div>
-                </div>
-            </div>
-            {% endfor %}
-        </div>
-    {% else %}
-        <p>No items in your wishlist.</p>
-    {% endif %}
+    <div id="wishlist-items"></div>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const wishlistItemsContainer = document.getElementById('wishlist-items');
+            let wishlist = localStorage.getItem('wishlist');
+            wishlist = wishlist ? JSON.parse(wishlist) : [];
+
+            if (wishlist.length > 0) {
+                wishlist.forEach(item => {
+                    const itemElement = document.createElement('div');
+                    itemElement.classList.add('card', 'mb-4');
+                    itemElement.innerHTML = `
+                        <img src="${item.image}" class="card-img-top" alt="${item.name}">
+                        <div class="card-body">
+                            <h5 class="card-title">${item.name}</h5>
+                            <p class="card-text"><strong>Price:</strong> $${item.price}</p>
+                            <button class="btn btn-danger" onclick="removeFromWishlist('${item.id}')">Remove from Wishlist</button>
+                        </div>
+                    `;
+                    wishlistItemsContainer.appendChild(itemElement);
+                });
+            } else {
+                wishlistItemsContainer.innerHTML = '<p>No items in your wishlist.</p>';
+            }
+        });
+
+        function removeFromWishlist(productId) {
+            let wishlist = localStorage.getItem('wishlist');
+            wishlist = wishlist ? JSON.parse(wishlist) : [];
+            wishlist = wishlist.filter(item => item.id !== productId);
+            localStorage.setItem('wishlist', JSON.stringify(wishlist));
+            location.reload();
+        }
+    </script>
 </main>
 {% endblock %}

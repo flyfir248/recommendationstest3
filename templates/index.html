@@ -35,7 +35,7 @@
                 <h5 class="card-title">{{ product.deal_title }}</h5>
                 <p class="card-text">{{ product.product_description }}</p>
                 <a href="{{ product.deal_url }}" class="btn btn-primary">View Product</a>
-                <button class="btn btn-success" onclick="addToCart('{{ product.id }}')">Add to Cart</button>
+                <button class="btn btn-success add-to-cart" data-id="{{ product.id }}" data-name="{{ product.deal_title }}" data-price="{{ product.price }}" data-image="{{ product.image_url }}">Add to Cart</button>
                 <button class="btn btn-warning" onclick="addToWishlist('{{ product.id }}')">Add to Wishlist</button>
             </div>
         </div>
@@ -53,7 +53,7 @@
                 <h5 class="card-title">{{ product.deal_title }}</h5>
                 <p class="card-text">{{ product.product_description }}</p>
                 <a href="{{ product.deal_url }}" class="btn btn-primary">View Product</a>
-                <button class="btn btn-success" onclick="addToCart('{{ product.id }}')">Add to Cart</button>
+                <button class="btn btn-success add-to-cart" data-id="{{ product.id }}" data-name="{{ product.deal_title }}" data-price="{{ product.price }}" data-image="{{ product.image_url }}">Add to Cart</button>
                 <button class="btn btn-warning" onclick="addToWishlist('{{ product.id }}')">Add to Wishlist</button>
             </div>
         </div>
@@ -71,7 +71,7 @@
                 <h5 class="card-title">{{ product.deal_title }}</h5>
                 <p class="card-text">{{ product.product_description }}</p>
                 <a href="{{ product.deal_url }}" class="btn btn-primary">View Product</a>
-                <button class="btn btn-success" onclick="addToCart('{{ product.id }}')">Add to Cart</button>
+                <button class="btn btn-success add-to-cart" data-id="{{ product.id }}" data-name="{{ product.deal_title }}" data-price="{{ product.price }}" data-image="{{ product.image_url }}">Add to Cart</button>
                 <button class="btn btn-warning" onclick="addToWishlist('{{ product.id }}')">Add to Wishlist</button>
             </div>
         </div>
@@ -138,21 +138,22 @@ $(document).ready(function() {
             }
         });
     });
-});
 
-function addToCart(productId) {
-    $.ajax({
-        url: '/add_to_cart',
-        method: 'POST',
-        data: { product_id: productId },
-        success: function(response) {
-            alert('Product added to cart!');
-        },
-        error: function(error) {
-            alert('Error adding product to cart.');
-        }
+    // Add to cart functionality
+    $('.add-to-cart').on('click', function() {
+        const product = {
+            id: $(this).data('id'),
+            name: $(this).data('name'),
+            price: $(this).data('price'),
+            image: $(this).data('image')
+        };
+        let cart = localStorage.getItem('cart');
+        cart = cart ? JSON.parse(cart) : [];
+        cart.push(product);
+        localStorage.setItem('cart', JSON.stringify(cart));
+        alert('Product added to cart!');
     });
-}
+});
 
 function addToWishlist(productId) {
     $.ajax({

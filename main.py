@@ -159,13 +159,25 @@ with app.app_context():
 @app.route('/add_to_cart', methods=['POST'])
 @login_required
 def add_to_cart():
-    product_id = request.json.get('product_id')
-    if product_id:
-        cart_item = Cart(user_id=current_user.id, product_id=product_id)
-        db.session.add(cart_item)
-        db.session.commit()
-        return jsonify({'success': True}), 200
-    return jsonify({'success': False}), 400
+    try:
+        product_id = request.json.get('product_id')
+        app.logger.info(f"Adding product {product_id} to cart")
+        if product_id:
+            cart_item = Cart.query.filter_by(user_id=current_user.id, product_id=product_id).first()
+            if cart_item:
+                cart_item.quantity += 1
+            else:
+                cart_item = Cart(user_id=current_user.id, product_id=product_id)
+                db.session.add(cart_item)
+            db.session.commit()
+            app.logger.info(f"Product {product_id} added to cart")
+            return jsonify({'success': True}), 200
+        else:
+            return jsonify({'error': 'No product ID provided'}), 400
+    except Exception as e:
+        app.logger.error(f"Error adding to cart: {e}")
+        return jsonify({'error': str(e)}), 500
+
 
 
 
@@ -190,8 +202,19 @@ def profile():
 @login_required
 def cart():
     cart_items = Cart.query.filter_by(user_id=current_user.id).all()
-    products = [{'product_id': item.product_id, 'quantity': item.quantity} for item in cart_items]
-    return render_template('cart.html', products=products)
+    items = []
+    for item in cart_items:
+        product = data[data['id'] == item.product_id].iloc[0]
+        items.append({
+            'product_id': item.product_id,
+            'product_title': product['deal_title'],
+            'product_price': product['price'],
+            'product_image': product.get('image_url', 'https://via.placeholder.com/150'),
+            'quantity': item.quantity
+        })
+    return render_template('cart.html', cart_items=items)
+
+
 
 @app.route('/add_to_wishlist', methods=['POST'])
 @login_required

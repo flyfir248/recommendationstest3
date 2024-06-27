@@ -8,3 +8,6 @@ flask-wtf
 Flask-Bcrypt
 Flask-Login
 email-validator
+streamlit
+seaborn
+matplotlib

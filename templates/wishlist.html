@@ -43,7 +43,7 @@
         function removeFromWishlist(productId) {
             let wishlist = localStorage.getItem('wishlist');
             wishlist = wishlist ? JSON.parse(wishlist) : [];
-            wishlist = wishlist.filter(item => item.id !== parseInt(productId));
+            wishlist = wishlist.filter(item => item.id !== productId);
             localStorage.setItem('wishlist', JSON.stringify(wishlist));
             document.querySelector(`button[data-product-id="${productId}"]`).closest('.card').remove();
         }

@@ -43,7 +43,7 @@
         function removeFromCart(productId) {
             let cart = localStorage.getItem('cart');
             cart = cart ? JSON.parse(cart) : [];
-            cart = cart.filter(item => item.id !== parseInt(productId));
+            cart = cart.filter(item => item.id !== productId);
             localStorage.setItem('cart', JSON.stringify(cart));
             document.querySelector(`button[data-product-id="${productId}"]`).closest('.card').remove();
         }

@@ -1,4 +1,3 @@
-<!-- templates/category.html -->
 {% extends "base.html" %}
 
 {% block title %}Category - {{ category_name }}{% endblock %}
@@ -19,8 +18,8 @@
                     <p class="card-text">{{ product['product_description'] }}</p>
                     <p class="card-text"><strong>Price:</strong> ${{ product['deal_act_price'] }}</p>
                     <a href="{{ product['deal_url'] }}" class="btn btn-primary">View Product</a>
-                    <button class="btn btn-success" onclick="addToCart('{{ product['id'] }}')">Add to Cart</button>
-                    <button class="btn btn-warning" onclick="addToWishlist('{{ product['id'] }}')">Add to Wishlist</button>
+                    <button class="btn btn-success add-to-cart" data-id="{{ product['id'] }}" data-name="{{ product['deal_title'] }}" data-price="{{ product['deal_act_price'] }}" data-image="{{ product['image_url'] }}">Add to Cart</button>
+                    <button class="btn btn-warning add-to-wishlist" data-id="{{ product['id'] }}" data-name="{{ product['deal_title'] }}" data-price="{{ product['deal_act_price'] }}" data-image="{{ product['image_url'] }}">Add to Wishlist</button>
                 </div>
             </div>
         </div>
@@ -29,26 +28,37 @@
 </div>
 
 <script>
-    function addToCart(productId) {
-        fetch('{{ url_for('add_to_cart') }}', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ product_id: productId })
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                alert('Product added to cart successfully!');
-            } else {
-                alert('Failed to add product to cart.');
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
+    $(document).ready(function() {
+        // Add to cart functionality
+        $('.add-to-cart').on('click', function() {
+            const product = {
+                id: $(this).data('id'),
+                name: $(this).data('name'),
+                price: $(this).data('price'),
+                image: $(this).data('image')
+            };
+            let cart = localStorage.getItem('cart');
+            cart = cart ? JSON.parse(cart) : [];
+            cart.push(product);
+            localStorage.setItem('cart', JSON.stringify(cart));
+            alert('Product added to cart!');
         });
-    }
+
+        // Add to wishlist functionality
+        $('.add-to-wishlist').on('click', function() {
+            const product = {
+                id: $(this).data('id'),
+                name: $(this).data('name'),
+                price: $(this).data('price'),
+                image: $(this).data('image')
+            };
+            let wishlist = localStorage.getItem('wishlist');
+            wishlist = wishlist ? JSON.parse(wishlist) : [];
+            wishlist.push(product);
+            localStorage.setItem('wishlist', JSON.stringify(wishlist));
+            alert('Product added to wishlist!');
+        });
+    });
 
     function addToWishlist(productId) {
         fetch('{{ url_for('add_to_wishlist') }}', {

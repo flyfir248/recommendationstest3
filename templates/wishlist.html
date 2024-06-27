@@ -23,7 +23,7 @@
                         <div class="card-body">
                             <h5 class="card-title">${item.name}</h5>
                             <p class="card-text"><strong>Price:</strong> $${item.price}</p>
-                            <button class="btn btn-danger" onclick="removeFromWishlist('${item.id}')">Remove from Wishlist</button>
+                            <button class="btn btn-danger remove-from-wishlist" data-product-id="${item.id}">Remove from Wishlist</button>
                         </div>
                     `;
                     wishlistItemsContainer.appendChild(itemElement);
@@ -31,14 +31,21 @@
             } else {
                 wishlistItemsContainer.innerHTML = '<p>No items in your wishlist.</p>';
             }
+
+            wishlistItemsContainer.addEventListener('click', (event) => {
+                if (event.target.classList.contains('remove-from-wishlist')) {
+                    const productId = event.target.getAttribute('data-product-id');
+                    removeFromWishlist(productId);
+                }
+            });
         });
 
         function removeFromWishlist(productId) {
             let wishlist = localStorage.getItem('wishlist');
             wishlist = wishlist ? JSON.parse(wishlist) : [];
-            wishlist = wishlist.filter(item => item.id !== productId);
+            wishlist = wishlist.filter(item => item.id !== parseInt(productId));
             localStorage.setItem('wishlist', JSON.stringify(wishlist));
-            location.reload();
+            document.querySelector(`button[data-product-id="${productId}"]`).closest('.card').remove();
         }
     </script>
 </main>
